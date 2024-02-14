@@ -55,8 +55,8 @@ static const char* mqtt_server   = "www.yanacreations.com";         // Broker IP
 static uint16_t mqtt_port        = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid       = "MonaConnect";     // Add your Wi-Fi ssid
-const char* password   = ""; // Add your Wi-Fi password 
+const char* ssid       = "ARRIS-34A2";     // Add your Wi-Fi ssid
+const char* password   = "BPM7EW600194"; // Add your Wi-Fi password 
 
 
 // TASK HANDLES
@@ -98,11 +98,6 @@ CRGB leds[NUM_LEDS];
 #ifndef MQTT_H
 #include "mqtt.h"
 #endif
-
-// Temporary Variables
-// double temperature = 0;
-// double humidity = 0;
-// double index = 0;
 
 
 void setup() {
@@ -177,7 +172,7 @@ void vUpdate(void* pvParameters) {
       doc["timestamp"] = getTimeStamp();
       doc["temperature"] = t;
       doc["humidity"] = h;
-      doc["heatindex"] = calcHeatIndex(t, h);  //dht.computeHeatIndex(t,h); //
+      doc["heatindex"] = dht.computeHeatIndex(t,h); //
 
       // 4. Seralize / Covert JSon object to JSon string and store in message array
 

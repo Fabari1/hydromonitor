@@ -78,7 +78,7 @@ watch(led,(controls)=>{
 JSON.stringify({"type":"controls","brightness":controls.brightness,"leds":controls.nodes,"color": controls.color});
         Mqtt.publish("620154701_sub",message); // Publish to a topic subscribed to by the hardware
     },1000)
-});
+})
 </script>
 
 

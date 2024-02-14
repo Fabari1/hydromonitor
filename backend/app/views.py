@@ -17,6 +17,7 @@ from os import getcwd
 from os.path import join, exists
 from time import time, ctime
 from math import floor
+
  
 
 
@@ -28,9 +29,19 @@ from math import floor
 @app.route('/api/climo/get/<start>/<end>', methods=['GET']) 
 def get_all(start,end):   
     '''RETURNS ALL THE DATA FROM THE DATABASE THAT EXIST IN BETWEEN THE START AND END TIMESTAMPS'''
+    start= int(start)
+    end= int(end)
    
     if request.method == "GET":
-        '''Add your code here to complete this route'''
+        try:
+            item= mongo.getAllInRange(start, end)
+        
+            if item:
+                return jsonify({"status":"found","data":item})
+        
+        except Exception as e:
+            msg = str(e)
+            print(f"get_all error: f{str(e)}")
 
     # FILE DATA NOT EXIST
     return jsonify({"status":"not found","data":[]})
@@ -39,42 +50,72 @@ def get_all(start,end):
 
 
 @app.route('/api/mmar/temperature/<start>/<end>', methods=['GET']) 
-def get_temperature_mmar(start,end):   
-    '''RETURNS MIN, MAX, AVG AND RANGE FOR TEMPERATURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
-   
-    if request.method == "GET": 
-        '''Add your code here to complete this route'''
+def get_temperature_mmar(start, end):
+        '''RETURNS MIN, MAX, AVG AND RANGE FOR TEMPERATURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+        start= int(start)
+        end= int(end)
+        print(f"Start Date: {start}")
+        print(f"End Date: {end}")
+        print(type(start))
+        print(type(end))
+        if request.method == "GET":
+            try:
+                item= mongo.temperatureMMAR(start, end)
+                print(f"Item: {item}")
+                if item:
 
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+                    return jsonify({"status":"found","data":item})
+                    print("No data")
+            except Exception as e:
+                msg = str(e)
+                print(f"get_all error: f{str(e)}")
 
-
-
-
-
-@app.route('/api/mmar/humidity/<start>/<end>', methods=['GET']) 
-def get_humidity_mmar(start,end):   
-    '''RETURNS MIN, MAX, AVG AND RANGE FOR HUMIDITY. THAT FALLS WITHIN THE START AND END DATE RANGE'''
-   
-    if request.method == "GET": 
-        '''Add your code here to complete this route'''
-
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
-
+        return jsonify({"status":"not found","data":[]})
 
 
 
 
-@app.route('/api/frequency/<variable>/<start>/<end>', methods=['GET']) 
-def get_freq_distro(variable,start,end):   
-    '''RETURNS FREQUENCY DISTRIBUTION FOR SPECIFIED VARIABLE'''
-   
-    if request.method == "GET": 
-        '''Add your code here to complete this route'''         
 
-    # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+@app.route('/api/mmar/humidity/<start>/<end>', methods=['GET'])
+def get_humidity_mmar(start, end):
+        '''RETURNS MIN, MAX, AVG AND RANGE FOR HUMIDITY. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+        start= int(start)
+        end= int(end)
+
+        if request.method == "GET":
+            try:
+                item= mongo.humidityMMAR(start, end)
+                if item:
+                    return jsonify({"status":"found","data":item})
+            
+            except Exception as e:
+                msg = str(e)
+                print(f"get_all error: f{str(e)}")
+
+            return jsonify({"status":"not found","data":[]})
+
+
+
+
+
+@app.route('/api/frequency/<variable>/<start>/<end>', methods=['GET'])
+def get_freq_distro(variable,start, end):
+        '''RETURNS THE FREQUENCY DISTROBUTION FOR A SPECIFIED VARIABLE WITHIN THE START AND END DATE RANGE'''
+        start= int(start)
+        end= int(end)
+        variable= str(variable)
+
+        if request.method == "GET":
+            try:
+                item= mongo.frequencyDistro(variable, start, end)
+                if item:
+                    return jsonify({"status":"found","data":item})
+            
+            except Exception as e:
+                msg = str(e)
+                print(f"get_all error: f{str(e)}")
+
+            return jsonify({"status":"not found","data":[]})
 
 
 
@@ -100,7 +141,34 @@ def upload():
         file.save(join(getcwd(),Config.UPLOADS_FOLDER , filename))
         return jsonify({"status":"File upload successful", "filename":f"{filename}" })
 
- 
+@app.route('/api/climo/get/<start>/<end>', methods=['GET'])
+def getAllInRange(self,start, end):
+        '''RETURNS A LIST OF OBJECTS. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+        try:
+            remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
+
+            query = {
+                    'timestamp': {
+                        '$lte': start,
+                        '$gte': end
+                    }
+                }
+
+            projection = {
+                    '_id': False
+                }
+
+            sort = [
+                    ('timestamp', 1)
+                ]
+            result      = list(remotedb.ELET2415.climo.find(query, projection=projection).sort(sort))
+        except Exception as e:
+            msg = str(e)
+            print("getAllInRange error ",msg)            
+        else:                  
+            return result
+
+
 
 
 ###############################################################
