@@ -56,7 +56,7 @@ class DB:
         try:
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
            
-            result      = remotedb.ELET2415.climo.insert_one(data)
+            result      = remotedb.ELET2415.weather.insert_one(data)
         except Exception as e:
             msg = str(e)
             if "duplicate" not in msg:
@@ -73,7 +73,7 @@ class DB:
             start=int(start)
             end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.climo.find({"timestamp": {'$gte': start, '$lte': end}},{'_id':0}).sort('timestamp', 1))
+            result      = list(remotedb.ELET2415.weather.find({"timestamp": {'$gte': start, '$lte': end}},{'_id':0}).sort('timestamp', 1))
         except Exception as e:
             msg = str(e)
             print("getAllInRange error ",msg)            
@@ -87,7 +87,7 @@ class DB:
             start=int(start)
             end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.climo.aggregate( [
+            result      = list(remotedb.ELET2415.weather.aggregate( [
             {
                 '$match': {
                     'timestamp': {
@@ -137,7 +137,7 @@ class DB:
             start=int(start)
             end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result = list(remotedb.ELET2415.climo.aggregate([{ '$match': { 'timestamp': { '$gte': start, '$lte': end } } }, { '$group': { '_id': 0, 'temperature': { '$push': '$$ROOT.temperature' } } }, { '$project': { 'max': { '$max': '$temperature' }, 'min': { '$min': '$temperature' }, 'avg': { '$avg': '$temperature' }, 'range': { '$subtract': [ { '$max': '$temperature' }, { '$min': '$temperature' } ] } } } ]))
+            result = list(remotedb.ELET2415.weather.aggregate([{ '$match': { 'timestamp': { '$gte': start, '$lte': end } } }, { '$group': { '_id': 0, 'temperature': { '$push': '$$ROOT.temperature' } } }, { '$project': { 'max': { '$max': '$temperature' }, 'min': { '$min': '$temperature' }, 'avg': { '$avg': '$temperature' }, 'range': { '$subtract': [ { '$max': '$temperature' }, { '$min': '$temperature' } ] } } } ]))
             #result = list(remotedb.ELET2415.climo.aggregate([ { '$match': {} } ]))
         except Exception as e:
             msg = str(e)
@@ -152,7 +152,7 @@ class DB:
             start=int(start)
             end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.climo.aggregate([{
+            result      = list(remotedb.ELET2415.weather.aggregate([{
                             '$match': {
                             'timestamp': { '$gte': start, '$lte': end}
                             }

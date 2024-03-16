@@ -26,7 +26,7 @@ from math import floor
 #   Routing for your application    #
 #####################################
 
-@app.route('/api/climo/get/<start>/<end>', methods=['GET']) 
+@app.route('/api/weather/get/<start>/<end>', methods=['GET']) 
 def get_all(start,end):   
     '''RETURNS ALL THE DATA FROM THE DATABASE THAT EXIST IN BETWEEN THE START AND END TIMESTAMPS'''
     start= int(start)
